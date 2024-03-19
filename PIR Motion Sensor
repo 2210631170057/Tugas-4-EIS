@@ -1,0 +1,60 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+//Define PIR motion sensor
+#define PIR_PIN 12
+
+//Define LCD
+#define LCD_COLUMNS 16
+#define LCD_ROWS 2
+#define LCD_ADDRESS 0x27 // I2C address
+
+//LCD object
+LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLUMNS, LCD_ROWS);
+
+//Variabel hitungan
+int count = 0;
+
+void setup() {
+  Serial.begin(9600);
+
+  //Input PIR pin
+  pinMode(PIR_PIN, INPUT);
+
+  //LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Motion Count:");
+
+  //Tampilkan hitungan
+  lcd.setCursor(0, 1);
+  lcd.print(count);
+}
+
+void loop() {
+  //Membaca PIR sensor
+  int pirValue = digitalRead(PIR_PIN);
+
+  //Jika terdeteksi gerakan
+  if (pirValue == HIGH) {
+    //Tambahkan hitungan
+    count++;
+
+    //Tampilkan hitungan ke monitor
+    Serial.print("Motion Detect = ");
+    Serial.println(count);
+
+    //Update hitungan ke LCD
+    lcd.setCursor(0, 1);
+    lcd.print("");
+    lcd.setCursor(0, 1);
+    lcd.print(count);
+  }
+
+  //Jika tidak terdeteksi gerakan
+  else{
+    Serial.print("No motion detect \n");
+  }
+  delay(1000);
+}
